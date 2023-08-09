@@ -5,11 +5,19 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.awt.geom.RoundRectangle2D;
 
+// constructor for the Calculator class; initializes the user interface
 public class Calculator {
+    // singleton pattern: Only one instance of Calculator class can be created
     private static final Calculator instance = new Calculator();
-    private final JFrame frame;
+    private final JFrame frame; // main JFrame
+
+    // calculator display
     final JTextField display = new JTextField("0");
+
+    // unary calculation button grouping
     private final String n4Functions = "x\\^2|x\\^3|e\\^x|10\\^x|Copy|x!|ln|log10|1/x|√x|∛x|e|sin|cos|tan|π|sinh|cosh|tanh|Rand";
+
+    // unary calculation button grouping
     private final String fourFunctions = "[×÷+–]";
 
     private String lastBtnPressed = "AC";
@@ -48,6 +56,7 @@ public class Calculator {
     }
 
     private Calculator() {
+        // initializes calculator UI components
         frame = new JFrame("Calculator");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(522, 400);
@@ -72,6 +81,7 @@ public class Calculator {
         // int rows = 6;
         int cols = 8;
 
+        // button name representation
         String[] buttons = {
                 "x^2", "x^3", "e^x", "10^x", "AC", "±", "%", "÷",
                 "Copy", "x!", "ln", "log10", "7", "8", "9", "×",
@@ -79,6 +89,8 @@ public class Calculator {
                 "sin", "cos", "tan", "π", "1", "2", "3", "+",
                 "sinh", "cosh", "tanh", "Rand", "0", "0", ".", "="
         };
+
+        // initializing buttons and their properties
         for (int i = 0; i < buttons.length; i++) {
             String colour = "#fe9f06";
             String fontColour = "#FFFFFF";
@@ -107,11 +119,7 @@ public class Calculator {
             btn.setBounds(x, y, buttonWidth, buttonHeight);
             frame.add(btn);
             // button listener
-            btn.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    processButton(btn.getText());
-                }
-            });
+            btn.addActionListener(e -> processButton(btn.getText()));
         }
 
         frame.setVisible(true);
@@ -140,7 +148,7 @@ public class Calculator {
         lastBtnPressed = buttonText;
     }
 
-
+    // handles numerical or decimal input.
     private void numberOrDecimalInput(String buttonText) {
         String currentText = display.getText();
 
@@ -170,6 +178,7 @@ public class Calculator {
         }
     }
 
+    // clears the input field of the calculator (and operations as needed)
     private void clearInput() {
         display.setText("0");
         prevNumber = null;
@@ -177,7 +186,7 @@ public class Calculator {
         lastBinaryNumber = null;
     }
 
-    // does the instant (non-four function calculators)
+    // does the instant (non-four function calculators) calculations
     private void doMathN4(String operation) {
         String currentText = display.getText();
         double value;
@@ -197,7 +206,7 @@ public class Calculator {
                 StringSelection stringSelection = new StringSelection(display.getText());
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(stringSelection, null);
-                JOptionPane.showMessageDialog(frame, "Contents copied to clipboard.");
+                JOptionPane.showMessageDialog(frame, "Content copied to clipboard.");
             }
             case "1/x" -> {
                 if (value != 0) {
@@ -265,6 +274,7 @@ public class Calculator {
 
     }
 
+    // computes the factorial of a given number (int, non-negative)
     private double factorial(double n) {
         if (n == 0) {
             return 1;
@@ -276,6 +286,7 @@ public class Calculator {
         return result;
     }
 
+    // handles math operations for basic four functions (+, -, *, /).
     private void doMath4F(String operation) {
         double currentNumber;
 
@@ -316,7 +327,7 @@ public class Calculator {
         operatorPressed = true;
     }
 
-    // equal button handling
+    // handles logic when the equals button is pressed.
     private void evaluateEquals() {
         double currentNumber;
 
@@ -353,18 +364,20 @@ public class Calculator {
         }
     }
 
+    // formats the result to display on the calculator's screen.
     private String formatResult(double result) {
-        // to format the result without ".0" for whole numbers.
+        // mainly to remove ".0" for whole numbers.
         if (result == (long) result) {
             return String.format("%d", (long) result);
         } else return String.valueOf(result); // for Errors / Infinity output
     }
 
+    // singleton pattern: Returns the single instance of the Calculator class
     public static Calculator getInstance() {
         return instance;
     }
 
-
+    // main method to run the calculator program.
     public static void main(String[] args) {
         Calculator.getInstance();
     }
@@ -372,6 +385,8 @@ public class Calculator {
     /* NOTE: method was written entirely by me for the CSC207 group assignment,
      *       reused in this assignment purely for aesthetic purposes. */
     private static JButton genRoundBtn(String text, String colorHex, boolean toggle) {
+
+        // generates a rounded (hoverable) button for the calculator's UI
         Color defaultColor = Color.decode(colorHex);
         Color hoverColor = toggle ? Color.decode("#FFFFFF") : defaultColor.brighter();
 
